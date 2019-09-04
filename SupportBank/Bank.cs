@@ -25,22 +25,19 @@ namespace SupportBank
             accounts.Add(name, new Account(name));
         }
 
-        public Account GetAccount(string name)
+        public Account GetOrCreateAccount(string name)
         {
             if (!Exists(name))
                 AddAccount(name);
             return accounts[name];
         }
 
-        public void ListAccounts()
+        public Dictionary<string, float> GetBalances()
         {
+            Dictionary<string, float> balances = new Dictionary<string, float>();
             foreach (string name in accounts.Keys)
-            {
-                if (accounts[name].GetBalance() <= 0)
-                    Console.WriteLine(name + " owes " + -1 * accounts[name].GetBalance());
-                else
-                    Console.WriteLine(name + " is owed " + accounts[name].GetBalance());
-            }
+                balances[name] = accounts[name].Balance;
+            return balances;
         }
     }
 }

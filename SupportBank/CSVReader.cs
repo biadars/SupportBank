@@ -11,14 +11,11 @@ namespace SupportBank
 {
     public class CSVReader
     {
-        public static Bank ReadCSV()
+        public static Bank ReadCSV(string filepath)
         {
             Bank bank = new Bank();
-            string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            folder = Directory.GetParent(folder).FullName;
-            folder = Directory.GetParent(folder).FullName;
-            folder = Directory.GetParent(folder).FullName;
-            string path = folder + @"\Input\Transactions2014.csv";
+            string folder = GetHomeFolder();
+            string path = folder + filepath;
             using (TextFieldParser csvParser = new TextFieldParser(path))
             {
                 csvParser.CommentTokens = new string[] { "#" };
@@ -29,15 +26,28 @@ namespace SupportBank
                 while (!csvParser.EndOfData)
                 {
                     string[] fields = csvParser.ReadFields();
-                    Transaction transaction = new Transaction(Convert.ToDateTime(fields[0]), fields[1],
-                        fields[2], fields[3], float.Parse(fields[4]));
-                    Account from = bank.GetAccount(transaction.GetFrom());
+                    Transaction transaction = new Transaction(
+                        transactionDate: Convert.ToDateTime(fields[0]),
+                        transactionFrom: fields[1],
+                        transactionTo: fields[2], 
+                        transactionNarrative: fields[3], 
+                        transactionAmount: float.Parse(fields[4]));
+                    Account from = bank.GetOrCreateAccount(transaction.From);
                     from.AddTransaction(transaction);
-                    Account to = bank.GetAccount(transaction.GetTo());
+                    Account to = bank.GetOrCreateAccount(transaction.To);
                     to.AddTransaction(transaction);
                 }
             }
             return bank;
+        }
+
+        private static string GetHomeFolder()
+        {
+            string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            folder = Directory.GetParent(folder).FullName;
+            folder = Directory.GetParent(folder).FullName;
+            folder = Directory.GetParent(folder).FullName;
+            return folder;
         }
     }
 }
