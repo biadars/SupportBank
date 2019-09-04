@@ -22,26 +22,26 @@ namespace SupportBank
             using (TextFieldParser csvParser = new TextFieldParser(path))
             {
                 logger.Debug("Found file " + path + ". Parsing.");
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-                csvParser.ReadLine();
+                ConfigureCSVParser(csvParser);
 
                 while (!csvParser.EndOfData)
                 {
                     string[] fields = csvParser.ReadFields();
-                    logger.Debug("Read CSV line: " + string.Join(",", fields));
+                    logger.Debug("Read CSV line " + (csvParser.LineNumber - 1) + ": " + string.Join(",", fields));
+                    if (!ValidateData(fields[0], fields[4], csvParser.LineNumber - 1))
+                        continue;
                     Transaction transaction = new Transaction(
                         transactionDate: Convert.ToDateTime(fields[0]),
                         transactionFrom: fields[1],
-                        transactionTo: fields[2], 
-                        transactionNarrative: fields[3], 
+                        transactionTo: fields[2],
+                        transactionNarrative: fields[3],
                         transactionAmount: float.Parse(fields[4]));
                     logger.Debug("Created transaction " + transaction);
                     Account from = bank.GetOrCreateAccount(transaction.From);
                     from.AddTransaction(transaction);
                     Account to = bank.GetOrCreateAccount(transaction.To);
                     to.AddTransaction(transaction);
+
                 }
                 logger.Info("Finished parsing CSV");
             }
@@ -57,6 +57,40 @@ namespace SupportBank
             folder = Directory.GetParent(folder).FullName;
             logger.Debug("Found home folder: " + folder);
             return folder;
+        }
+
+        private static TextFieldParser ConfigureCSVParser(TextFieldParser csvParser)
+        {
+            csvParser.CommentTokens = new string[] { "#" };
+            csvParser.SetDelimiters(new string[] { "," });
+            csvParser.HasFieldsEnclosedInQuotes = true;
+            csvParser.ReadLine();
+            return csvParser;
+        }
+
+        private static bool ValidateData(string date, string amount, long line)
+        {
+            try
+            {
+                Convert.ToDateTime(date);
+            }
+            catch (System.FormatException exception)
+            {
+                logger.Error(exception.Message);
+                Console.WriteLine("Error: Could not parse line " + line + ". " + date + " is not a validly formated date.");
+                return false;
+            }
+            try
+            {
+                float.Parse(amount);
+            }
+            catch (System.FormatException exception)
+            {
+                logger.Error(exception.Message);
+                Console.WriteLine("Error: Could not parse line " + line + ". " + amount + " is not a floating point number.");
+                return false;
+            }
+            return true;
         }
     }
 }
