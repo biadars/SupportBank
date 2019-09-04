@@ -22,5 +22,15 @@ namespace SupportBank
             Narrative = transactionNarrative;
             Amount = transactionAmount;
         }
+
+        public override string ToString()
+        {
+            string msg = "Date: " + Date;
+            msg += "\tFrom: " + From;
+            msg += "\t To: " + To;
+            msg += "\t Narrative: " + Narrative;
+            msg += "\tAmount: " + Amount;
+            return msg;
+        }
     }
 }

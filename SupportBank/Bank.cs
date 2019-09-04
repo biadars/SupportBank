@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace SupportBank
 {
     public class Bank
     {
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, Account> accounts;
 
         public Bank()
@@ -28,7 +30,10 @@ namespace SupportBank
         public Account GetOrCreateAccount(string name)
         {
             if (!Exists(name))
+            {
+                logger.Debug("Account \"" + name + "\" did not exist. Creating account.");
                 AddAccount(name);
+            }
             return accounts[name];
         }
 

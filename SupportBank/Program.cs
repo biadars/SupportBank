@@ -1,4 +1,7 @@
-﻿using System;
+﻿using NLog;
+using NLog.Config;
+using NLog.Targets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +11,11 @@ namespace SupportBank
 {
     class Program
     {
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         static void Main(string[] args)
         {
-            Bank bank = CSVReader.ReadCSV(@"\Input\Transactions2014.csv");
+            ConfigureLogging();
+            Bank bank = CSVReader.ReadCSV(@"\Input\DodgyTransactions2015.csv");
             UserInterface(bank);
         }
 
@@ -23,24 +28,40 @@ namespace SupportBank
                 Console.WriteLine("Type command (list all / list <name> / exit)");
                 input = Console.ReadLine();
                 if (input == "exit")
+                {
+                    logger.Info("Exiting application according to user request.");
                     return;
+                }
                 if (input == "list all")
+                {
+                    logger.Info("Listing all accounts.");
                     PrintBalances(bank);
+                }
                 else if (input.Length > 4 && input.Substring(0, 4) == "list")
                 {
                     string name = input.Substring(5);
                     if (bank.Exists(name))
+                    {
+                        logger.Info("Retrieving account " + name);
                         PrintTransactions(bank.GetOrCreateAccount(name));
+                    }
                     else
+                    {
+                        logger.Info("No account with name " + name + " found.");
                         Console.WriteLine("No account with name " + name);
+                    }
                 }
                 else
+                {
+                    logger.Info("Invalid user command: " + input);
                     Console.WriteLine("Unkown command: " + input);
+                }
             }
         }
 
         private static void PrintTransactions(Account account)
         {
+            logger.Info("Printing transactions for account " + account.Name);
             Transaction transaction;
             List < Transaction > transactions = account.Transactions;
             Console.WriteLine("Transactions for account " + account.Name + ":");
@@ -53,10 +74,12 @@ namespace SupportBank
                     transaction.Date, transaction.From, transaction.To,
                     transaction.Narrative, transaction.Amount);
             }
+            logger.Info(transactions.Count + " transactions printed.");
         }
 
         private static void PrintBalances(Bank bank)
         {
+            logger.Info("Printing all account balances.");
             Dictionary<string, float> balances = bank.GetBalances();
             foreach (string name in balances.Keys)
             {
@@ -65,6 +88,20 @@ namespace SupportBank
                 else
                     Console.WriteLine(name + " is owed " + balances[name]);
             }
+            logger.Info("Printed balances for all " + balances.Keys.Count + " accounts.");
+        }
+
+        private static void ConfigureLogging()
+        {
+            var config = new LoggingConfiguration();
+            var target = new FileTarget {
+                FileName = @"C:\Work\Logs\SupportBank.log",
+                Layout = @"${longdate} ${level} - ${logger}: ${message}",
+                DeleteOldFileOnStartup = true};
+            config.AddTarget("File Logger", target);
+            config.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, target));
+            LogManager.Configuration = config;
+            logger.Debug("Logging successfully configured");
         }
     }
 }

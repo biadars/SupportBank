@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace SupportBank
 {
     public class Account
     {
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         public string Name { get; private set; }
         public float Balance { get; private set; }
         public List<Transaction> Transactions { get; private set; }
@@ -26,6 +28,7 @@ namespace SupportBank
             if (transaction.To == Name)
                 Balance += transaction.Amount;
             Transactions.Add(transaction);
+            logger.Debug("Added transaction to account " + Name + ". Balance updated to " + Balance);
         }
     }
 }
