@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Diagnostics;
-using Microsoft.VisualBasic.FileIO;
 
 namespace SupportBank
 {
@@ -13,31 +10,33 @@ namespace SupportBank
     {
         static void Main(string[] args)
         {
-            Bank bank = new Bank();
-            string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            folder = Directory.GetParent(folder).FullName;
-            folder = Directory.GetParent(folder).FullName;
-            folder = Directory.GetParent(folder).FullName;
-            string path = folder + @"\Input\Transactions2014.csv";
-            using (TextFieldParser csvParser = new TextFieldParser(path))
-            {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-                csvParser.ReadLine();
+            Bank bank = CSVReader.ReadCSV();
+            UserInterface(bank);
+        }
 
-                while (!csvParser.EndOfData)
+
+        static void UserInterface(Bank bank)
+        {
+            string input;
+            while(true)
+            {
+                Console.WriteLine("Type command (list all / list <name> / exit)");
+                input = Console.ReadLine();
+                if (input == "exit")
+                    return;
+                if (input == "list all")
+                    bank.ListAccounts();
+                else if (input.Length > 4 && input.Substring(0, 4) == "list")
                 {
-                    string[] fields = csvParser.ReadFields();
-                    Transaction transaction = new Transaction(Convert.ToDateTime(fields[0]), fields[1],
-                        fields[2], fields[3], float.Parse(fields[4]));
-                    Account from = bank.GetAccount(transaction.GetFrom());
-                    from.AddTransaction(transaction);
-                    Account to = bank.GetAccount(transaction.GetTo());
-                    to.AddTransaction(transaction);
+                    string name = input.Substring(5);
+                    if (bank.Exists(name))
+                        bank.GetAccount(name).PrintTransactions();
+                    else
+                        Console.WriteLine("No account with name " + name);
                 }
+                else
+                    Console.WriteLine("Unkown command: " + input);
             }
-            Console.ReadLine();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace SupportBank
             accounts = new Dictionary<string, Account>();
         }
 
-        private bool Exists(string name)
+        public bool Exists(string name)
         {
             return accounts.ContainsKey(name);
         }
@@ -30,6 +30,17 @@ namespace SupportBank
             if (!Exists(name))
                 AddAccount(name);
             return accounts[name];
+        }
+
+        public void ListAccounts()
+        {
+            foreach (string name in accounts.Keys)
+            {
+                if (accounts[name].GetBalance() <= 0)
+                    Console.WriteLine(name + " owes " + -1 * accounts[name].GetBalance());
+                else
+                    Console.WriteLine(name + " is owed " + accounts[name].GetBalance());
+            }
         }
     }
 }
