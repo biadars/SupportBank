@@ -37,9 +37,9 @@ namespace SupportBank
             return accounts[name];
         }
 
-        public Dictionary<string, float> GetBalances()
+        public Dictionary<string, decimal> GetBalances()
         {
-            Dictionary<string, float> balances = new Dictionary<string, float>();
+            Dictionary<string, decimal> balances = new Dictionary<string, decimal>();
             foreach (string name in accounts.Keys)
                 balances[name] = accounts[name].Balance;
             return balances;

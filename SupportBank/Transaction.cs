@@ -12,9 +12,9 @@ namespace SupportBank
         public string From { get; private set; }
         public string To { get; private set; }
         public string Narrative { get; private set; }
-        public float Amount { get; private set; }
+        public decimal Amount { get; private set; }
 
-        public Transaction(DateTime transactionDate, string transactionFrom, string transactionTo, string transactionNarrative, float transactionAmount)
+        public Transaction(DateTime transactionDate, string transactionFrom, string transactionTo, string transactionNarrative, decimal transactionAmount)
         {
             Date = transactionDate;
             From = transactionFrom;

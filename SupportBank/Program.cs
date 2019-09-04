@@ -80,7 +80,7 @@ namespace SupportBank
         private static void PrintBalances(Bank bank)
         {
             logger.Info("Printing all account balances.");
-            Dictionary<string, float> balances = bank.GetBalances();
+            Dictionary<string, decimal> balances = bank.GetBalances();
             foreach (string name in balances.Keys)
             {
                 if (balances[name] <= 0)
