@@ -29,10 +29,12 @@ namespace SupportBank
                 while (!csvParser.EndOfData)
                 {
                     string[] fields = csvParser.ReadFields();
-                    if (!bank.Exists(fields[1]))
-                        bank.AddAccount(fields[1]);
-                    if (!bank.Exists(fields[2]))
-                        bank.AddAccount(fields[2]);
+                    Transaction transaction = new Transaction(Convert.ToDateTime(fields[0]), fields[1],
+                        fields[2], fields[3], float.Parse(fields[4]));
+                    Account from = bank.GetAccount(transaction.GetFrom());
+                    from.AddTransaction(transaction);
+                    Account to = bank.GetAccount(transaction.GetTo());
+                    to.AddTransaction(transaction);
                 }
             }
             Console.ReadLine();

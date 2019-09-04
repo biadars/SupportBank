@@ -15,20 +15,21 @@ namespace SupportBank
             accounts = new Dictionary<string, Account>();
         }
 
-        public bool Exists(string name)
+        private bool Exists(string name)
         {
             return accounts.ContainsKey(name);
         }
 
-        public void AddAccount(string name)
+        private void AddAccount(string name)
         {
             accounts.Add(name, new Account(name));
         }
 
-        public void PrintAccounts()
+        public Account GetAccount(string name)
         {
-            foreach (string key in accounts.Keys)
-                Console.WriteLine(key);
+            if (!Exists(name))
+                AddAccount(name);
+            return accounts[name];
         }
     }
 }

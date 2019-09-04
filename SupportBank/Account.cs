@@ -9,7 +9,7 @@ namespace SupportBank
     public class Account
     {
         private string name;
-        private int balance;
+        private float balance;
         private List<Transaction> transactions;
 
         public Account(string fullName, int initial=0)
@@ -17,6 +17,15 @@ namespace SupportBank
             name = fullName;
             balance = initial;
             transactions = new List<Transaction>();
+        }
+
+        public void AddTransaction(Transaction transaction)
+        {
+            if (transaction.GetFrom() == name)
+                balance -= transaction.GetAmount();
+            if (transaction.GetTo() == name)
+                balance += transaction.GetAmount();
+            transactions.Add(transaction);
         }
 
         public void PrintTransactions()
