@@ -23,11 +23,11 @@ namespace SupportBank.FileHandling
             switch (extension)
             {
                 case "csv":
-                    return FileHandling.CSVReader.ReadCSV(filepath);
+                    return CSVReader.ReadCSV(filepath);
                 case "json":
-                    return FileHandling.JSONReader.ReadJSON(filepath);
+                    return JSONReader.ReadJSON(filepath);
                 case "xml":
-                    return FileHandling.XMLReader.ReadXML(filepath);
+                    return XMLReader.ReadXML(filepath);
                 default:
                     throw new Exception("File extension \"" + extension + "\"not recognised.");
             }

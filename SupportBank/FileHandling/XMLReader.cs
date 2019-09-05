@@ -25,7 +25,6 @@ namespace SupportBank.FileHandling
             var xmltransactions = doc.Descendants("SupportTransaction").ToList();
             for (int i = 0; i < xmltransactions.Count; i++)
             {
-                Console.WriteLine(xmltransactions[i].Attribute("Date").Value);
                 Transaction transaction = new Transaction(
                     DateTime.FromOADate(double.Parse(xmltransactions[i].Attribute("Date").Value)),
                     xmltransactions[i].Element("Parties").Element("From").Value,
