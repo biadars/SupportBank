@@ -26,6 +26,8 @@ namespace SupportBank.FileHandling
                     return FileHandling.CSVReader.ReadCSV(filepath);
                 case "json":
                     return FileHandling.JSONReader.ReadJSON(filepath);
+                case "xml":
+                    return FileHandling.XMLReader.ReadXML(filepath);
                 default:
                     throw new Exception("File extension \"" + extension + "\"not recognised.");
             }

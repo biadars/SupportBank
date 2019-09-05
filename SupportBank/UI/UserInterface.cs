@@ -57,9 +57,10 @@ namespace SupportBank.UI
         {
             try
             {
+                List<Transaction> transactions = FileImporter.ImportFile(path);
                 Console.WriteLine("Successfully imported file " + path);
                 logger.Info("Successfully imported file " + path);
-                return FileImporter.ImportFile(path);
+                return transactions;
             }
             catch (Exception exception)
             {
