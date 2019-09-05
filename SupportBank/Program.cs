@@ -54,6 +54,9 @@ namespace SupportBank
                         logger.Info("Exiting application according to user request.");
                         Environment.Exit(0);
                         break;
+                    case "export":
+                        UserInterface.ExportData(bank.GetTransactions(), response.Argument);
+                        break;
                     default:
                         continue;
                 } 

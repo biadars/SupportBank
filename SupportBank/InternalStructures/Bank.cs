@@ -58,5 +58,18 @@ namespace SupportBank.InternalStructures
             }
             return balances;
         }
+
+        public List<Transaction> GetTransactions()
+        {
+            //will generate duplicates!
+            List<Transaction> transactions = new List<Transaction>();
+            foreach (string person in accounts.Keys)
+            {
+                List<Transaction> personTransactions = accounts[person].Transactions;
+                for (int i = 0; i < personTransactions.Count; i++)
+                    transactions.Add(personTransactions[i]);
+            }
+            return transactions;
+        }
     }
 }

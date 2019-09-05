@@ -25,6 +25,8 @@ namespace SupportBank.UI
             }
             if (input.Length > 6 && input.Substring(0, 6) == "import")
                 return new UserResponse("import", input.Substring(7));
+            if (input.Length > 6 && input.Substring(0, 6) == "export")
+                return new UserResponse("export", input.Substring(7));
             logger.Info("Invalid user command: " + input);
             Console.WriteLine("Unkown command: " + input);
             return new UserResponse("invalid");

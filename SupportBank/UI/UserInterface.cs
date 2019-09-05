@@ -1,8 +1,10 @@
-﻿using NLog;
+﻿using Newtonsoft.Json;
+using NLog;
 using SupportBank.FileHandling;
 using SupportBank.InternalStructures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,6 +94,11 @@ namespace SupportBank.UI
             {
                 return new List<Transaction>();
             }
+        }
+
+        public static void ExportData(List<Transaction> transactions, string filepath)
+        {
+            System.IO.File.WriteAllText(filepath, JsonConvert.SerializeObject(transactions));
         }
     }
 }
