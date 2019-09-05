@@ -15,7 +15,7 @@ namespace SupportBank
         static void Main(string[] args)
         {
             ConfigureLogging();
-            Bank bank = CSVReader.ReadCSV(@"\Input\DodgyTransactions2015.csv");
+            Bank bank = JSONReader.ReadJSON(@"\Input\Transactions2013.json");
             UserInterface(bank);
         }
 
