@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SupportBank
+namespace SupportBank.InternalStructures
 {
     public class Bank
     {

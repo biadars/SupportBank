@@ -9,15 +9,10 @@ namespace SupportBank
 {
     public class Transaction
     {
-        [JsonProperty("Date")]
         public DateTime Date { get; private set; }
-        [JsonProperty("FromAccount")]
         public string From { get; private set; }
-        [JsonProperty("ToAccount")]
         public string To { get; private set; }
-        [JsonProperty("Narrative")]
         public string Narrative { get; private set; }
-        [JsonProperty("Amount")]
         public decimal Amount { get; private set; }
 
         public Transaction(DateTime transactionDate, string transactionFrom, string transactionTo, string transactionNarrative, decimal transactionAmount)

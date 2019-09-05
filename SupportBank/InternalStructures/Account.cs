@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SupportBank
+namespace SupportBank.InternalStructures
 {
     public class Account
     {
@@ -12,7 +12,7 @@ namespace SupportBank
         public decimal Balance { get; private set; }
         public List<Transaction> Transactions { get; private set; }
 
-        public Account(string fullName, decimal initial=0)
+        public Account(string fullName, decimal initial = 0)
         {
             Name = fullName;
             Balance = initial;

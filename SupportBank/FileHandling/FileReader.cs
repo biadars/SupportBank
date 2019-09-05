@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SupportBank
+namespace SupportBank.FileHandling
 {
     public abstract class FileReader
     {
@@ -23,29 +23,41 @@ namespace SupportBank
             return folder;
         }
 
+        public static void TerminateOnFileNotFound(string path)
+        {
+            if (!File.Exists(path))
+            {
+                logger.Error("File " + path + " was not found.");
+                Console.WriteLine("File " + path + " was not found.");
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+        }
+
         public static bool ValidateData(string date, string amount, long line)
         {
+            bool valid = true;
             try
             {
                 Convert.ToDateTime(date);
             }
-            catch (System.FormatException exception)
+            catch (FormatException exception)
             {
                 logger.Error(exception.Message);
                 Console.WriteLine("Error: Could not parse line " + line + ". " + date + " is not a validly formated date.");
-                return false;
+                valid = false;
             }
             try
             {
                 decimal.Parse(amount);
             }
-            catch (System.FormatException exception)
+            catch (FormatException exception)
             {
                 logger.Error(exception.Message);
                 Console.WriteLine("Error: Could not parse line " + line + ". " + amount + " is not a floating point number.");
-                return false;
+                valid = false;
             }
-            return true;
+            return valid;
         }
     }
 }
