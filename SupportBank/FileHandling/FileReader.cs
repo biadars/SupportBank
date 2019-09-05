@@ -18,7 +18,7 @@ namespace SupportBank.FileHandling
             string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             folder = Directory.GetParent(folder).FullName;
             folder = Directory.GetParent(folder).FullName;
-            folder = Directory.GetParent(folder).FullName;
+            folder = Directory.GetParent(folder).FullName + "\\Input\\";
             logger.Debug("Found home folder: " + folder);
             return folder;
         }

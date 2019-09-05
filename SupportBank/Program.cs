@@ -18,8 +18,7 @@ namespace SupportBank
         static void Main(string[] args)
         {
             ConfigureLogging();
-            Bank bank = CSVReader.ReadCSV(@"\Input\Transactions2014.csv");
-            UserInterface.RunUI(bank);
+            UserInterface.RunUI();
         }
 
         private static void ConfigureLogging()
@@ -34,5 +33,6 @@ namespace SupportBank
             LogManager.Configuration = config;
             logger.Debug("Logging successfully configured");
         }
+
     }
 }

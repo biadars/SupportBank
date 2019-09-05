@@ -12,9 +12,10 @@ namespace SupportBank.InternalStructures
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, Account> accounts;
 
-        public Bank()
+        public Bank(List<Transaction> transactions)
         {
             accounts = new Dictionary<string, Account>();
+            AddTransactions(transactions);
         }
 
         public bool Exists(string name)
@@ -35,6 +36,17 @@ namespace SupportBank.InternalStructures
                 AddAccount(name);
             }
             return accounts[name];
+        }
+
+        public void AddTransactions(List<Transaction> transactions)
+        {
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                Account account = GetOrCreateAccount(transactions[i].From);
+                account.AddTransaction(transactions[i]);
+                account = GetOrCreateAccount(transactions[i].To);
+                account.AddTransaction(transactions[i]);
+            }
         }
 
         public Dictionary<string, decimal> GetBalances()

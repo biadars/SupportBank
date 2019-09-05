@@ -1,4 +1,5 @@
 ﻿using NLog;
+using SupportBank.FileHandling;
 using SupportBank.InternalStructures;
 using System;
 using System.Collections.Generic;
@@ -11,42 +12,12 @@ namespace SupportBank.UI
     public class UserInterface
     {
         private static readonly NLog.ILogger logger = LogManager.GetCurrentClassLogger();
-        public static void RunUI(Bank bank)
+        public static void RunUI()
         {
-            string input;
+            Bank bank = InitialiseBank();
             while (true)
             {
-                Console.WriteLine("Type command (list all / list <name> / exit)");
-                input = Console.ReadLine();
-                if (input == "exit")
-                {
-                    logger.Info("Exiting application according to user request.");
-                    return;
-                }
-                if (input == "list all")
-                {
-                    logger.Info("Listing all accounts.");
-                    PrintBalances(bank);
-                }
-                else if (input.Length > 4 && input.Substring(0, 4) == "list")
-                {
-                    string name = input.Substring(5);
-                    if (bank.Exists(name))
-                    {
-                        logger.Info("Retrieving account " + name);
-                        PrintTransactions(bank.GetOrCreateAccount(name));
-                    }
-                    else
-                    {
-                        logger.Info("No account with name " + name + " found.");
-                        Console.WriteLine("No account with name " + name);
-                    }
-                }
-                else
-                {
-                    logger.Info("Invalid user command: " + input);
-                    Console.WriteLine("Unkown command: " + input);
-                }
+                bank = ProcessUserInput(bank);
             }
         }
 
@@ -81,5 +52,93 @@ namespace SupportBank.UI
             }
             logger.Info("Printed balances for all " + balances.Keys.Count + " accounts.");
         }
+
+        private static List<Transaction> GetUserFile(string path)
+        {
+            try
+            {
+                Console.WriteLine("Successfully imported file " + path);
+                logger.Info("Successfully imported file " + path);
+                return FileImporter.ImportFile(path);
+            }
+            catch (Exception exception)
+            {
+                logger.Error(exception.Message);
+                Console.WriteLine(exception.Message);
+                throw exception;
+            }
+        }
+
+        private static Bank InitialiseBank()
+        {
+            List<Transaction> transactions;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Input the file path relative to the applicaion input directory: " + FileReader.GetHomeFolder());
+                    string path = Console.ReadLine();
+                    transactions = GetUserFile(path);
+                    return new Bank(transactions);
+                }
+                catch (Exception exception)
+                {
+                    continue;
+                }
+            }
+        }
+
+        private static Bank UpdateBank(Bank bank, string path)
+        {
+            List<Transaction> transactions;
+            try
+            {
+                transactions = GetUserFile(path);
+                bank.AddTransactions(transactions);
+                return bank;
+            }
+            catch (Exception exception)
+            {
+                return bank;
+            }
+        }
+
+        private static Bank ProcessUserInput(Bank bank)
+        {
+            Console.WriteLine("Type command (list all / list <name> / exit)");
+            string input = Console.ReadLine();
+            if (input == "exit")
+            {
+                logger.Info("Exiting application according to user request.");
+                Environment.Exit(0);
+            }
+            if (input == "list all")
+            {
+                logger.Info("Listing all accounts.");
+                PrintBalances(bank);
+                return bank;
+            }
+            if (input.Length > 4 && input.Substring(0, 4) == "list")
+            {
+                string name = input.Substring(5);
+                if (bank.Exists(name))
+                {
+                    logger.Info("Retrieving account " + name);
+                    PrintTransactions(bank.GetOrCreateAccount(name));
+                    return bank;
+                }
+                else
+                {
+                    logger.Info("No account with name " + name + " found.");
+                    Console.WriteLine("No account with name " + name);
+                }
+            }
+            if (input.Length > 6 && input.Substring(0, 6) == "import")
+                return UpdateBank(bank, input.Substring(7));
+            logger.Info("Invalid user command: " + input);
+            Console.WriteLine("Unkown command: " + input);
+            return bank;
+        }
+
     }
 }

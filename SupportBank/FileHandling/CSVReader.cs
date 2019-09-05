@@ -14,10 +14,10 @@ namespace SupportBank.FileHandling
     public class CSVReader : FileReader
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-        public static Bank ReadCSV(string filepath)
+        public static List<Transaction> ReadCSV(string filepath)
         {
             logger.Info("Reading CSV file " + filepath);
-            Bank bank = new Bank();
+            List<Transaction> transactions;
             string folder = GetHomeFolder();
             string path = folder + filepath;
             TerminateOnFileNotFound(path);
@@ -25,10 +25,10 @@ namespace SupportBank.FileHandling
             {
                 logger.Debug("Found file " + path + ". Parsing.");
                 ConfigureCSVParser(csvParser);
-                bank = ParseCSV(csvParser);
+                transactions = ParseCSV(csvParser);
                 logger.Info("Finished parsing CSV");
             }
-            return bank;
+            return transactions;
         }
 
         private static TextFieldParser ConfigureCSVParser(TextFieldParser csvParser)
@@ -39,9 +39,9 @@ namespace SupportBank.FileHandling
             return csvParser;
         }
 
-        private static Bank ParseCSV(TextFieldParser csvParser)
+        private static List<Transaction> ParseCSV(TextFieldParser csvParser)
         {
-            Bank bank = new Bank();
+            List<Transaction> transactions = new List<Transaction>();
             bool valid = true;
             csvParser.ReadLine();
             while (!csvParser.EndOfData)
@@ -59,10 +59,7 @@ namespace SupportBank.FileHandling
                     transactionTo: fields[2],
                     transactionNarrative: fields[3],
                     transactionAmount: decimal.Parse(fields[4]));
-                Account from = bank.GetOrCreateAccount(transaction.From);
-                from.AddTransaction(transaction);
-                Account to = bank.GetOrCreateAccount(transaction.To);
-                to.AddTransaction(transaction);
+                transactions.Add(transaction);
 
             }
             if (!valid)
@@ -71,7 +68,7 @@ namespace SupportBank.FileHandling
                 Console.ReadLine();
                 Environment.Exit(0);
             }
-            return bank;
+            return transactions;
         }
     }
 }
